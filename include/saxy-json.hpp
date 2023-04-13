@@ -198,6 +198,141 @@ protected:
     int current_indent;
     std::vector<bool> in_array_stack;
 };
+
+template<typename Handler, typename IStream = std::istream>
+class Reader
+{
+public:
+    Reader(Handler& handler, IStream& istream)
+        : handler(handler) , istream(istream)
+    {
+    }
+
+    void Parse()
+    {
+        char ch;
+        while (istream.get(ch))
+        {
+            switch (ch)
+            {
+                case '{':
+                    handler.StartObject();
+                    break;
+                case '}':
+                    handler.FinishObject();
+                    break;
+                case '[':
+                    handler.StartArray();
+                    break;
+                case ']':
+                    handler.FinishArray();
+                    break;
+                case '"':
+                    handler.String(ReadString());
+                    break;
+                case ':':
+                case ',':
+                    break;
+                default:
+                    if (std::isdigit(ch) || ch == '-' || ch == '+')
+                    {
+                        istream.putback(ch);
+                        handler.Number(ReadNumber());
+                    }
+                    else if (std::isalpha(ch))
+                    {
+                        istream.putback(ch);
+                        handler.Keyword(ReadKeyword());
+                    }
+                    break;
+            }
+        }
+    }
+
+private:
+    std::string ReadString()
+    {
+        std::string str;
+        char ch;
+        bool escape = false;
+        while (istream.get(ch))
+        {
+            if (escape)
+            {
+                switch (ch)
+                {
+                    case '"': str.push_back('"'); break;
+                    case '\\': str.push_back('\\'); break;
+                    case '/': str.push_back('/'); break;
+                    case 'b': str.push_back('\b'); break;
+                    case 'f': str.push_back('\f'); break;
+                    case 'n': str.push_back('\n'); break;
+                    case 'r': str.push_back('\r'); break;
+                    case 't': str.push_back('\t'); break;
+                    default: str.push_back(ch); break;
+                }
+                escape = false;
+            }
+            else
+            {
+                if (ch == '\\')
+                {
+                    escape = true;
+                }
+                else if (ch == '"')
+                {
+                    break;
+                }
+                else
+                {
+                    str.push_back(ch);
+                }
+            }
+        }
+        return str;
+    }
+
+    std::string ReadNumber()
+    {
+        std::string num;
+        char ch;
+        while (istream.get(ch))
+        {
+            if (std::isdigit(ch) || ch == '.' || ch == 'e' || ch == 'E' || ch == '-' || ch == '+')
+            {
+                num.push_back(ch);
+            }
+            else
+            {
+                istream.putback(ch);
+                break;
+            }
+        }
+        return num;
+    }
+
+    std::string ReadKeyword()
+    {
+        std::string keyword;
+        char ch;
+        while (istream.get(ch))
+        {
+            if (std::isalpha(ch))
+            {
+                keyword.push_back(ch);
+            }
+            else
+            {
+                istream.putback(ch);
+                break;
+            }
+        }
+        return keyword;
+    }
+
+    Handler& handler;
+    IStream& istream;
+};
 }
 
 #endif

@@ -127,3 +127,8 @@ TEST_CASE("PrettyWriter", "[pretty_write]")
 
     std::cout << std::endl;
 }
+
+TEST_CASE("Reader", "[read]")
+{
+}
+
