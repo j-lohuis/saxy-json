@@ -11,6 +11,7 @@
 #include <array>
 #include <ostream>
 #include <limits>
+#include <concepts>
 #include <charconv>
 #include <functional>
 
@@ -56,6 +57,36 @@ public:
         Put('"');
         Put(':');
         level_stack.back() = false;
+    }
+    
+    void KeyValue(std::string_view key, std::integral auto value)
+    {
+        Key(key);
+        Int(value);
+    }
+
+    void KeyValue(std::string_view key, std::floating_point auto value)
+    {
+        Key(key);
+        Float(value);
+    }
+
+    void KeyValue(std::string_view key, bool value)
+    {
+        Key(key);
+        Bool(value);
+    }
+
+    void KeyValue(std::string_view key, std::nullptr_t)
+    {
+        Key(key);
+        Null();
+    }
+
+    void KeyValue(std::string_view key, std::string_view value)
+    {
+        Key(key);
+        String(value);
     }
 
     void String(std::string_view str)
@@ -137,7 +168,14 @@ protected:
             level_stack.back() = true;
     }
 
-    void Put(char c) { ostream.put(c); }
+    void Put(char c)
+    {
+        if constexpr (requires { ostream.put(c); })
+            ostream.put(c);
+        else
+            ostream << c;
+    }
+
 
     OStream& ostream;
     std::vector<bool> level_stack;
