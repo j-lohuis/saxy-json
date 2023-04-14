@@ -89,6 +89,12 @@ public:
         String(value);
     }
 
+    void KeyValue(std::string_view key, const char* value)
+    {
+        Key(key);
+        String(value);
+    }
+
     void String(std::string_view str)
     {
         Put('"');
