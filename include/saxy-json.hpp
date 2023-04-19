@@ -58,7 +58,7 @@ public:
         Put(':');
         level_stack.back() = false;
     }
-    
+
     void KeyValue(std::string_view key, std::integral auto value)
     {
         Key(key);
@@ -437,7 +437,9 @@ std::string GetEscapedString(THandler& handler, IStream& istream)
 
                 uint8_t res;
                 std::from_chars(first.data(), first.data() + first.size(), res, 16);
-                str += static_cast<char>(res);
+                if (res != 0)
+                    str += static_cast<char>(res);
+
                 std::from_chars(second.data(), second.data() + second.size(), res, 16);
                 str += static_cast<char>(res);
             }
