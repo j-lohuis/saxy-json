@@ -6,32 +6,22 @@
 
 using namespace saxy_json;
 
-TEST_CASE("Writer", "[write]")
+template<typename Writer>
+static void build_object(Writer& writer)
 {
-    Writer writer{std::cout};
-
     writer.StartObject(); // Root object
 
-    writer.Key("name");
-    writer.String("John Doe");
+    writer.KeyValue("name", "John Doe");
 
-    writer.Key("age");
-    writer.Int(35);
+    writer.KeyValue("age", 35);
 
     writer.Key("address");
     writer.StartObject(); // Address object
 
-    writer.Key("street");
-    writer.String("123 Main St");
-
-    writer.Key("city");
-    writer.String("Springfield");
-
-    writer.Key("state");
-    writer.String("IL");
-
-    writer.Key("zip_code");
-    writer.String("62704");
+    writer.KeyValue("street", "123 Main St");
+    writer.KeyValue("city", "Springfield");
+    writer.KeyValue("state", "IL");
+    writer.KeyValue("zip_code", "62704");
 
     writer.FinishObject(); // End of address object
 
@@ -40,30 +30,30 @@ TEST_CASE("Writer", "[write]")
 
     writer.StartObject(); // First phone number object
 
-    writer.Key("type");
-    writer.String("home");
-
-    writer.Key("number");
-    writer.String("555-1234");
+    writer.KeyValue("type", "home");
+    writer.KeyValue("number", "555-5678");
 
     writer.FinishObject(); // End of first phone number object
 
     writer.StartObject(); // Second phone number object
 
-    writer.Key("type");
-    writer.String("work");
-
-    writer.Key("number");
-    writer.String("555-5678");
+    writer.KeyValue("type", "work");
+    writer.KeyValue("number", "555-8765");
 
     writer.FinishObject(); // End of second phone number object
 
     writer.FinishArray(); // End of phone numbers array
 
-    writer.Key("email");
-    writer.String("john.doe@example.com");
+    writer.KeyValue("email", "john.doe@eample.com");
 
     writer.FinishObject(); // End of root object
+}
+
+TEST_CASE("Writer", "[write]")
+{
+    Writer writer{std::cout};
+
+    build_object(writer);
 
     std::cout << std::endl;
 }
@@ -73,60 +63,7 @@ TEST_CASE("PrettyWriter", "[pretty_write]")
     std::string res;
     PrettyWriter writer{res};
 
-    writer.StartObject(); // Root object
-
-    writer.Key("name");
-    writer.String("John Doe");
-
-    writer.Key("age");
-    writer.Int(35);
-
-    writer.Key("address");
-    writer.StartObject(); // Address object
-
-    writer.Key("street");
-    writer.String("123 Main St");
-
-    writer.Key("city");
-    writer.String("Springfield");
-
-    writer.Key("state");
-    writer.String("IL");
-
-    writer.Key("zip_code");
-    writer.String("62704");
-
-    writer.FinishObject(); // End of address object
-
-    writer.Key("phone_numbers");
-    writer.StartArray(); // Phone numbers array
-
-    writer.StartObject(); // First phone number object
-
-    writer.Key("type");
-    writer.String("home");
-
-    writer.Key("number");
-    writer.String("555-1234");
-
-    writer.FinishObject(); // End of first phone number object
-
-    writer.StartObject(); // Second phone number object
-
-    writer.Key("type");
-    writer.String("work");
-
-    writer.Key("number");
-    writer.String("555-5678");
-
-    writer.FinishObject(); // End of second phone number object
-
-    writer.FinishArray(); // End of phone numbers array
-
-    writer.Key("email");
-    writer.String("john.doe@example.com");
-
-    writer.FinishObject(); // End of root object
+    build_object(writer);
 
     std::cout << res << std::endl;
 }
