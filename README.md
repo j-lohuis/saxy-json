@@ -1,6 +1,111 @@
 # saxy-json
 C++ SAX JSON API Library
 
+## Getting Started
+
+To use this library, you simply add the file [saxy-json.hpp](include/saxy-json.hpp) to your project and include it.
+
+
+## Examples
+
+### Writer
+
+```c++
+#include <saxy_json.hpp>
+
+namespace json = saxy_json;
+
+json::Writer writer{std::cout};
+
+writer.StartObject(); // Root object
+
+writer.KeyValue("name", "John Doe");
+
+writer.KeyValue("age", 35);
+
+writer.Key("address");
+writer.StartObject(); // Address object
+
+writer.KeyValue("street", "123 Main St");
+writer.KeyValue("city", "Springfield");
+writer.KeyValue("state", "IL");
+writer.KeyValue("zip_code", "62704");
+
+writer.FinishObject(); // End of address object
+
+writer.Key("phone_numbers");
+writer.StartArray(); // Phone numbers array
+
+writer.StartObject(); // First phone number object
+
+writer.KeyValue("type", "home");
+writer.KeyValue("number", "555-5678");
+
+writer.FinishObject(); // End of first phone number object
+
+writer.StartObject(); // Second phone number object
+
+writer.KeyValue("type", "work");
+writer.KeyValue("number", "555-8765");
+
+writer.FinishObject(); // End of second phone number object
+
+writer.FinishArray(); // End of phone numbers array
+
+writer.KeyValue("email", "john.doe@eample.com");
+
+writer.FinishObject(); // End of root object
+
+std::cout << std::endl;
+
+/*
+*/
+```
+
+Result:
+
+```json
+{"name":"John Doe","age":35,"address":{"street":"123 Main St","city":"Springfield","state":"IL","zip_code":"62704"},"phone_numbers":[{"type":"home","number":"555-1234"},{"type":"work","number":"555-5678"}],"email":"john.doe@example.com"}
+```
+
+### PrettyWriter
+
+```c++
+#include <saxy_json.hpp>
+
+namespace json = saxy_json;
+
+json::PrettyWriter writer{std::cout, 4};
+
+// same as above ...
+```
+
+Result:
+
+```json
+{
+    "name": "John Doe",
+    "age": 35,
+    "address": {
+        "street": "123 Main St",
+        "city": "Springfield",
+        "state": "IL",
+        "zip_code": "62704"
+    },
+    "phone_numbers": [
+        {
+            "type": "home",
+            "number": "555-1234"
+        },
+        {
+            "type": "work",
+            "number": "555-5678"
+        }
+    ],
+    "email": "john.doe@example.com"
+}
+```
+
 
 ## Test results
 
