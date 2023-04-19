@@ -112,7 +112,7 @@ public:
     }
     void Int(std::integral auto i)
     {
-        std::array<char, std::numeric_limits<decltype(i)>::digits10> buffer;
+        std::array<char, std::numeric_limits<decltype(i)>::digits10+1> buffer{0};
 
         if (auto [ptr, ec] =
                 std::to_chars(buffer.data(), buffer.data() + buffer.size(), i);
@@ -125,7 +125,7 @@ public:
     }
     void Float(std::floating_point auto f)
     {
-        std::array<char, std::numeric_limits<decltype(f)>::max_digits10> buffer;
+        std::array<char, std::numeric_limits<decltype(f)>::max_digits10+1> buffer{0};
 
         if (auto [ptr, ec] =
                 std::to_chars(buffer.data(), buffer.data() + buffer.size(), f);
